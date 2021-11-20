@@ -78,34 +78,21 @@ namespace GrafikaKomputerowa2
 
                 Clear();
 
+                var color = GetColor(Colors.Black);
                 foreach (var triangle in triangles)
                 {
-                    // TODO: Implement rendering
-                }
+                    int width = (int)WriteableBitmap.Width;
+                    int height = (int)WriteableBitmap.Height;
+                    int x0 = (int)triangle[0].X + width / 2;
+                    int y0 = (int)triangle[0].Y + height / 2;
+                    int x1 = (int)triangle[1].X + width / 2;
+                    int y1 = (int)triangle[1].Y + height / 2;
+                    int x2 = (int)triangle[2].X + width / 2;
+                    int y2 = (int)triangle[2].Y + height / 2;
 
-                MarkDirty();
-            }
-            finally
-            {
-                WriteableBitmap.Unlock();
-            }
-        }
-
-        public void Render(IEnumerable<Vec3> vertices)
-        {
-            try
-            {
-                WriteableBitmap.Lock();
-
-                Clear();
-
-                int width = (int)WriteableBitmap.Width;
-                int height = (int)WriteableBitmap.Height;
-                foreach (var vertex in vertices)
-                {
-                    int x = (int)(vertex.X + width / 2);
-                    int y = (int)(vertex.Y + height / 2);
-                    PutPixel(x, y, GetColor(Colors.Black));
+                    DrawLine(x0, y0, x1, y1, color);
+                    DrawLine(x1, y1, x2, y2, color);
+                    DrawLine(x2, y2, x0, y0, color);
                 }
 
                 MarkDirty();

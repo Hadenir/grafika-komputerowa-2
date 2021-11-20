@@ -1,7 +1,4 @@
-﻿using GrafikaKomputerowa2.Algebra;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
 using System.Windows;
 using System.Windows.Media;
 
@@ -12,13 +9,9 @@ namespace GrafikaKomputerowa2
         private readonly Canvas canvas = new();
         private readonly Scene scene = new();
 
-        private readonly IEnumerable<Vec3> vs;
-
         public MainWindow()
         {
             InitializeComponent();
-
-            vs = SphereTriangulator.CreateSemiSphere(280, 0.5f);
 
             CompositionTarget.Rendering += Render;
         }
@@ -27,15 +20,20 @@ namespace GrafikaKomputerowa2
 
         protected void Render(object? sender, EventArgs e)
         {
-            canvas.Render(vs);
+            canvas.Render(scene.Triangles);
         }
 
         private void CanvasContainer_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            canvas.Resize(e.NewSize.Width, e.NewSize.Height);
+            var size = e.NewSize;
+
+            canvas.Resize(size.Width, size.Height);
             CanvasImage.Source = canvas.WriteableBitmap;
 
-            Debug.WriteLine($"{ActualWidth} / {ActualHeight}   {CanvasContainer.ActualWidth} / {CanvasContainer.ActualHeight}");
+            var radius = (float)Math.Min(size.Width, size.Height) / 2 - 5;
+            scene.PrepareScene(radius, 0.35f);
+
+            e.Handled = true;
         }
     }
 }
