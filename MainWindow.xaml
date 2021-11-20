@@ -16,10 +16,10 @@
             <Image x:Name="CanvasImage" />
         </Grid>
         <Grid Grid.Column="1" Margin="5" Background="LightGray">
-            <GroupBox Header="Triangulation" Margin="5">
+            <GroupBox Header="Triangulation" Margin="5"  VerticalAlignment="Center">
                 <DockPanel VerticalAlignment="Center">
                     <Label Content="{Binding ElementName=TriangulationPrecisionSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" Width="30" />
-                    <Slider x:Name="TriangulationPrecisionSlider" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Margin="5" />
+                    <Slider x:Name="TriangulationPrecisionSlider" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="50" Margin="5" ValueChanged="TriangulationPrecisionSlider_ValueChanged" />
                 </DockPanel>
             </GroupBox>
         </Grid>

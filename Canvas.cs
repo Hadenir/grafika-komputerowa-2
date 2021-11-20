@@ -3,6 +3,7 @@ using GrafikaKomputerowa2.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -19,14 +20,16 @@ namespace GrafikaKomputerowa2
 
         public Canvas(double width, double height)
         {
-            WriteableBitmap = CreateBitmap(width, height);
+            WriteableBitmap = CreateBitmap((int)width, (int)height);
 
             Clear();
         }
 
-        public void Resize(double width, double height)
+        public void Resize(double newWidth, double newHeight)
         {
-            if (width == WriteableBitmap.Width && height == WriteableBitmap.Height) return;
+            var width = (int)newWidth;
+            var height = (int)newHeight;
+            if (width == WriteableBitmap.PixelWidth && height == WriteableBitmap.PixelHeight) return;
 
             var oldBitmap = WriteableBitmap;
             try
@@ -51,8 +54,8 @@ namespace GrafikaKomputerowa2
                 unsafe
                 {
                     IntPtr backBuffer = WriteableBitmap.BackBuffer;
-                    int width = (int)WriteableBitmap.Width;
-                    int height = (int)WriteableBitmap.Height;
+                    int width = WriteableBitmap.PixelWidth;
+                    int height = WriteableBitmap.PixelHeight;
                     var bytesPerPixel = WriteableBitmap.Format.BitsPerPixel / 8;
 
                     for (int i = 0; i < width * height; i++)
@@ -103,19 +106,18 @@ namespace GrafikaKomputerowa2
             }
         }
 
-        private void MarkDirty() => WriteableBitmap.AddDirtyRect(new Int32Rect(0, 0, (int)WriteableBitmap.Width, (int)WriteableBitmap.Height));
+        private void MarkDirty() => WriteableBitmap.AddDirtyRect(new Int32Rect(0, 0, WriteableBitmap.PixelWidth, WriteableBitmap.PixelHeight));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void PutPixel(int x, int y, int color)
         {
-            if (x < 0 || y < 0 || x >= WriteableBitmap.Width || y >= WriteableBitmap.Height) return;
+            if (x < 0 || y < 0 || x >= WriteableBitmap.PixelWidth || y >= WriteableBitmap.PixelHeight) return;
 
             unsafe
             {
-                IntPtr backBuffer = WriteableBitmap.BackBuffer;
-                backBuffer += y * WriteableBitmap.BackBufferStride;
-                backBuffer += x * WriteableBitmap.Format.BitsPerPixel / 8;
-
-                *(int*)backBuffer = color;
+                int* backBuffer = (int*)WriteableBitmap.BackBuffer;
+                int index = x + (y * WriteableBitmap.BackBufferStride / 4);
+                backBuffer[index] = color;
             }
         }
 
@@ -145,8 +147,8 @@ namespace GrafikaKomputerowa2
             }
         }
 
-        private static WriteableBitmap CreateBitmap(double width, double height)
-            => new((int)width, (int)height, 96, 96, PixelFormats.Bgr32, null);
+        private static WriteableBitmap CreateBitmap(int width, int height)
+            => new(width, height, 96, 96, PixelFormats.Bgr32, null);
 
         private static int GetColor(byte r, byte g, byte b) => (r << 16) | (g << 8) | b;
 
