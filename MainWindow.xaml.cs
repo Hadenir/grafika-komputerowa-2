@@ -1,28 +1,41 @@
-﻿using System;
+﻿using GrafikaKomputerowa2.Algebra;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace GrafikaKomputerowa2
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly Canvas canvas = new();
+        private readonly Scene scene = new();
+
+        private readonly IEnumerable<Vec3> vs;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            vs = SphereTriangulator.CreateSemiSphere(280, 0.5f);
+
+            CompositionTarget.Rendering += Render;
+        }
+
+        // Event handlers:
+
+        protected void Render(object? sender, EventArgs e)
+        {
+            canvas.Render(vs);
+        }
+
+        private void CanvasContainer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            canvas.Resize(e.NewSize.Width, e.NewSize.Height);
+            CanvasImage.Source = canvas.WriteableBitmap;
+
+            Debug.WriteLine($"{ActualWidth} / {ActualHeight}   {CanvasContainer.ActualWidth} / {CanvasContainer.ActualHeight}");
         }
     }
 }
