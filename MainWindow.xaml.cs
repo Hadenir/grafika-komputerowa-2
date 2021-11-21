@@ -26,7 +26,8 @@ namespace GrafikaKomputerowa2
             CompositionTarget.Rendering += Render;
             stopwatch.Start();
 
-            renderContext.Texture = new Texture(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "bricks.jpg"));
+            renderContext.Texture = Texture.FromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "bricks.jpg"));
+            renderContext.NormalMap = Texture.FromNormalMap(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "brick_normalmap.png"));
         }
 
         private void PrepareScene()
@@ -88,7 +89,7 @@ namespace GrafikaKomputerowa2
             e.Handled = true;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void TextureButton_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
             {
@@ -98,7 +99,22 @@ namespace GrafikaKomputerowa2
             };
             if (openFileDialog.ShowDialog() != true) return;
 
-            renderContext.Texture = new Texture(openFileDialog.FileName);
+            renderContext.Texture = Texture.FromFile(openFileDialog.FileName);
+
+            e.Handled = true;
+        }
+
+        private void NormalMapButton_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                CheckFileExists = true,
+                Filter = "Image |*.jpg;*.bmp;*.png",
+                InitialDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+            };
+            if (openFileDialog.ShowDialog() != true) return;
+
+            renderContext.NormalMap = Texture.FromNormalMap(openFileDialog.FileName);
 
             e.Handled = true;
         }

@@ -50,7 +50,7 @@
                     </DockPanel>
                 </UniformGrid>
             </GroupBox>
-            <GroupBox Grid.Row="3" Header="Light">
+            <GroupBox Grid.Row="3" Header="Light" Margin="5">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -66,9 +66,10 @@
                     </DockPanel>
                 </Grid>
             </GroupBox>
-            <GroupBox Header="Scene" Grid.Row="4">
+            <GroupBox Header="Scene" Grid.Row="4" Margin="5">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -80,8 +81,11 @@
                         <xctk:ColorPicker x:Name="ColorPicker" IsEnabled="{Binding ElementName=ColorPickerRadio, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" SelectedColor="DarkGray" />
                     </RadioButton>
                     <RadioButton Grid.Row="2" x:Name="TexturePickerRadio" GroupName="color" VerticalContentAlignment="Center" IsChecked="True">
-                        <Button Content="Choose Texture..." IsEnabled="{Binding ElementName=TexturePickerRadio, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" Click="Button_Click" />
+                        <Button Content="Choose Texture..." IsEnabled="{Binding ElementName=TexturePickerRadio, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" Click="TextureButton_Click" />
                     </RadioButton>
+                    <CheckBox Grid.Row="3" x:Name="NormalMapCheckbox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5">
+                        <Button Content="Choose Normal Map..." IsEnabled="{Binding ElementName=TexturePickerRadio, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" Click="NormalMapButton_Click" />
+                    </CheckBox>
                 </Grid>
             </GroupBox>
         </Grid>

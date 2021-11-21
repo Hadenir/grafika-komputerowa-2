@@ -22,6 +22,9 @@
             elements[8] = e9;
         }
 
+        public static Mat3 FromRows(Vec3 v1, Vec3 v2, Vec3 v3)
+            => new(v1.X, v1.Y, v1.Z, v2.X, v2.Y, v2.Z, v3.X, v3.Y, v3.Z);
+
         public ref float this[int i] => ref elements[i];
         public ref float this[int i, int j] => ref elements[i + (j * 3)];
 

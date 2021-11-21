@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -14,6 +15,7 @@ namespace GrafikaKomputerowa2
     {
         public Vec3 Color { get; set; } = Vec3.Zero();
         public Texture? Texture { get; set; }
+        public Texture? NormalMap { get; set; }
         public bool Wireframe { get; set; }
         public float Kd { get; set; }
         public float Ks { get; set; }
@@ -98,16 +100,25 @@ namespace GrafikaKomputerowa2
                 var V = new Vec3(0, 0, 1);
                 var L = (scene.LightSource.Position - point).Normalized();
                 var R = 2 * N.Dot(L) * N - L;
+                var (u, v) = scene.GetUV(x, y);
 
                 Vec3 objColor;
                 if (context.Texture is not null)
                 {
-                    var (u, v) = scene.GetUV(x, y);
                     objColor = context.Texture.GetPixel(u, v);
                 }
                 else
                 {
                     objColor = context.Color;
+                }
+
+                if (context.NormalMap is not null)
+                {
+                    var B = N.Cross(new Vec3(0, 0, 1));
+                    if (B.X == 0 && B.Y == 0 && B.Z == 0) B = new Vec3(0, 1, 0);
+                    var T = B.Cross(N);
+                    var M = Mat3.FromRows(T, B, N);
+                    N = context.K * N + (1 - context.K) * M * context.NormalMap.GetPixel(u, v);
                 }
 
                 Vec3 color = Math.Clamp(N.Dot(L), 0, 1) * context.Kd * scene.LightSource.Color * objColor
@@ -216,8 +227,8 @@ namespace GrafikaKomputerowa2
             var width = (int)WriteableBitmap.Width;
             var height = (int)WriteableBitmap.Height;
             int* backBuffer = (int*)WriteableBitmap.BackBuffer;
-
-            int GetIndex(int x, int y) => x + (width / 2) + ((y + height / 2) * WriteableBitmap.BackBufferStride / 4);
+            int stride = WriteableBitmap.BackBufferStride;
+            int GetIndex(int x, int y) => x + (width / 2) + ((y + height / 2) * stride / 4);
 
             var vertices = triangle.Vertices.ToList();
             var ind = vertices
