@@ -15,11 +15,16 @@ namespace GrafikaKomputerowa2
         public IEnumerable<Triangle> Triangles { get; private set; } = Enumerable.Empty<Triangle>();
         public LightSource LightSource { get; private set; } = new();
 
-        public void PrepareScene(float radius, float precisionFactor)
+        public void PrepareScene(float radius, float precisionFactor, float lightZ)
         {
             this.radius = radius;
             Triangles = SphereTriangulator.CreateSemiSphere(radius, precisionFactor);
-            LightSource = new LightSource(new Vec3(0, 0, radius + 300), new Vec3(1, 1, 1));
+            LightSource = new LightSource(new Vec3(0, 0, radius + lightZ), new Vec3(1, 1, 1));
+        }
+
+        public void MoveLight(float newZ)
+        {
+            LightSource.Position.Z = radius + newZ;
         }
 
         public void AnimateLight(float dt)

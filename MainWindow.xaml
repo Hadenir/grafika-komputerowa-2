@@ -44,14 +44,25 @@
                     <DockPanel Grid.Column="2" VerticalAlignment="Center">
                         <Label Content="M" DockPanel.Dock="Top" HorizontalAlignment="Center" />
                         <Label Content="{Binding ElementName=MSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Bottom" HorizontalAlignment="Center" />
-                        <Slider x:Name="MSlider" Minimum="1" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" Value="50" />
+                        <Slider x:Name="MSlider" Minimum="1" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" Value="1" />
                     </DockPanel>
                 </UniformGrid>
             </GroupBox>
             <GroupBox Grid.Row="3" Header="Light">
-                <CheckBox x:Name="AnimateLightCheckox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5">
-                    <Label Content="Animate Light" VerticalAlignment="Center" />
-                </CheckBox>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" x:Name="AnimateLightCheckox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5">
+                        <Label Content="Animate Light" VerticalAlignment="Center" />
+                    </CheckBox>
+                    <DockPanel Grid.Row="1" VerticalAlignment="Center">
+                        <Label Content="Z" DockPanel.Dock="Left" />
+                        <Label Content="{Binding ElementName=LightZSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" Width="30" />
+                        <Slider x:Name="LightZSlider" Minimum="20" Maximum="200" TickFrequency="5" IsSnapToTickEnabled="True" Value="100" Margin="5" ValueChanged="LightZSlider_ValueChanged" />
+                    </DockPanel>
+                </Grid>
             </GroupBox>
         </Grid>
     </Grid>

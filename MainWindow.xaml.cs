@@ -27,7 +27,7 @@ namespace GrafikaKomputerowa2
         {
             var radius = (float)Math.Min(CanvasContainer.ActualWidth, CanvasContainer.ActualHeight) / 2 - 5;
             var precisionFactor = (float)TriangulationPrecisionSlider.Value / 100.0f;
-            scene.PrepareScene(radius, precisionFactor);
+            scene.PrepareScene(radius, precisionFactor, 100);
         }
 
         // Event handlers:
@@ -64,6 +64,13 @@ namespace GrafikaKomputerowa2
         private void TriangulationPrecisionSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             PrepareScene();
+
+            e.Handled = true;
+        }
+
+        private void LightZSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            scene.MoveLight((float)e.NewValue);
 
             e.Handled = true;
         }
