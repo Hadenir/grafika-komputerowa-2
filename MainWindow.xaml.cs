@@ -54,9 +54,10 @@ namespace GrafikaKomputerowa2
             renderContext.Kd = (float)(KdSlider.Value / 100);
             renderContext.Ks = (float)(KsSlider.Value / 100);
             renderContext.M = (float)MSlider.Value;
-            renderContext.K = 0;
+            renderContext.K = (float)(KSlider.Value / 100);
 
             if (TexturePickerRadio.IsChecked != true) renderContext.Texture = null;
+            if (NormalMapCheckbox.IsChecked != true) renderContext.NormalMap = null;
 
             canvas.Render(scene, renderContext);
 

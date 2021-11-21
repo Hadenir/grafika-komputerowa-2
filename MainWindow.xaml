@@ -23,6 +23,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <GroupBox Grid.Column="0" Grid.Row="1" Header="Triangulation" Margin="5">
@@ -77,15 +78,28 @@
                     <CheckBox Grid.Row="0" x:Name="WireframeCheckbox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5">
                         <Label Content="Show Wireframe" VerticalAlignment="Center" />
                     </CheckBox>
-                    <RadioButton Grid.Row="1" x:Name="ColorPickerRadio" GroupName="color" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch">
+                    <RadioButton Grid.Row="1" x:Name="ColorPickerRadio" GroupName="color" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch" Margin="5">
                         <xctk:ColorPicker x:Name="ColorPicker" IsEnabled="{Binding ElementName=ColorPickerRadio, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" SelectedColor="DarkGray" />
                     </RadioButton>
-                    <RadioButton Grid.Row="2" x:Name="TexturePickerRadio" GroupName="color" VerticalContentAlignment="Center" IsChecked="True">
+                    <RadioButton Grid.Row="2" x:Name="TexturePickerRadio" GroupName="color" VerticalContentAlignment="Center" Margin="5" IsChecked="True">
                         <Button Content="Choose Texture..." IsEnabled="{Binding ElementName=TexturePickerRadio, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" Click="TextureButton_Click" />
                     </RadioButton>
-                    <CheckBox Grid.Row="3" x:Name="NormalMapCheckbox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5">
-                        <Button Content="Choose Normal Map..." IsEnabled="{Binding ElementName=TexturePickerRadio, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" Click="NormalMapButton_Click" />
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Normal Map" Grid.Row="5" Margin="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" x:Name="NormalMapCheckbox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5" IsChecked="True">
+                        <Button Content="Choose Normal Map..." IsEnabled="{Binding ElementName=NormalMapCheckbox, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" Click="NormalMapButton_Click" />
                     </CheckBox>
+                    <DockPanel Grid.Row="1" VerticalAlignment="Center">
+                        <Label Content="K" DockPanel.Dock="Left" />
+                        <Label Content="{Binding ElementName=KSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" Width="30" />
+                        <Slider x:Name="KSlider" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="0" Margin="5" />
+                    </DockPanel>
                 </Grid>
             </GroupBox>
         </Grid>

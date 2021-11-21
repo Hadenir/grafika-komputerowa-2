@@ -133,8 +133,7 @@ namespace GrafikaKomputerowa2
 
                 Clear();
 
-                var color = GetColor(Colors.Red);
-                var color2 = GetColor(Colors.Black);
+                var color = GetColor(Colors.LightGray);
                 foreach (var triangle in triangles)
                 {
                     FillTriangle(triangle, CalculateColor);
