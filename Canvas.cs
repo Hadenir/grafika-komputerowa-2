@@ -13,6 +13,8 @@ namespace GrafikaKomputerowa2
     public class RenderContext
     {
         public Vec3 Color { get; set; } = Vec3.Zero();
+        public Texture? Texture { get; set; }
+        public bool Wireframe { get; set; }
         public float Kd { get; set; }
         public float Ks { get; set; }
         public float M { get; set; }
@@ -96,8 +98,20 @@ namespace GrafikaKomputerowa2
                 var V = new Vec3(0, 0, 1);
                 var L = (scene.LightSource.Position - point).Normalized();
                 var R = 2 * N.Dot(L) * N - L;
-                Vec3 color = Math.Clamp(N.Dot(L), 0, 1) * context.Kd * scene.LightSource.Color * context.Color
-                    + (float)Math.Clamp(Math.Pow(V.Dot(R), context.M), 0, 1) * context.Ks * scene.LightSource.Color * context.Color;
+
+                Vec3 objColor;
+                if (context.Texture is not null)
+                {
+                    var (u, v) = scene.GetUV(x, y);
+                    objColor = context.Texture.GetPixel(u, v);
+                }
+                else
+                {
+                    objColor = context.Color;
+                }
+
+                Vec3 color = Math.Clamp(N.Dot(L), 0, 1) * context.Kd * scene.LightSource.Color * objColor
+                    + (float)Math.Clamp(Math.Pow(V.Dot(R), context.M), 0, 1) * context.Ks * scene.LightSource.Color * objColor;
 
                 return color.ToInt();
             }
@@ -112,18 +126,19 @@ namespace GrafikaKomputerowa2
                 var color2 = GetColor(Colors.Black);
                 foreach (var triangle in triangles)
                 {
-                    //int x0 = (int)triangle[0].X + width / 2;
-                    //int y0 = (int)triangle[0].Y + height / 2;
-                    //int x1 = (int)triangle[1].X + width / 2;
-                    //int y1 = (int)triangle[1].Y + height / 2;
-                    //int x2 = (int)triangle[2].X + width / 2;
-                    //int y2 = (int)triangle[2].Y + height / 2;
-
                     FillTriangle(triangle, CalculateColor);
-
-                    //DrawLine(x0, y0, x1, y1, color);
-                    //DrawLine(x1, y1, x2, y2, color);
-                    //DrawLine(x2, y2, x0, y0, color);
+                    if (context.Wireframe)
+                    {
+                        int x0 = (int)triangle[0].X + width / 2;
+                        int y0 = (int)triangle[0].Y + height / 2;
+                        int x1 = (int)triangle[1].X + width / 2;
+                        int y1 = (int)triangle[1].Y + height / 2;
+                        int x2 = (int)triangle[2].X + width / 2;
+                        int y2 = (int)triangle[2].Y + height / 2;
+                        DrawLine(x0, y0, x1, y1, color);
+                        DrawLine(x1, y1, x2, y2, color);
+                        DrawLine(x2, y2, x0, y0, color);
+                    }
                 }
 
                 MarkDirty();

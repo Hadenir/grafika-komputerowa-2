@@ -1,8 +1,12 @@
 ﻿using GrafikaKomputerowa2.Algebra;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Media;
+using GrafikaKomputerowa2.Graphics;
+using System.IO;
 
 namespace GrafikaKomputerowa2
 {
@@ -21,6 +25,8 @@ namespace GrafikaKomputerowa2
 
             CompositionTarget.Rendering += Render;
             stopwatch.Start();
+
+            renderContext.Texture = new Texture(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "bricks.jpg"));
         }
 
         private void PrepareScene()
@@ -39,11 +45,18 @@ namespace GrafikaKomputerowa2
             if (AnimateLightCheckox.IsChecked == true)
                 scene.AnimateLight((float)stopwatch.Elapsed.TotalSeconds);
 
-            renderContext.Color = new Vec3(1, 0, 0);
+            renderContext.Color = new Vec3(
+                ColorPicker.SelectedColor!.Value.R / 255.0f,
+                ColorPicker.SelectedColor!.Value.G / 255.0f,
+                ColorPicker.SelectedColor!.Value.B / 255.0f);
+            renderContext.Wireframe = WireframeCheckbox.IsChecked == true;
             renderContext.Kd = (float)(KdSlider.Value / 100);
             renderContext.Ks = (float)(KsSlider.Value / 100);
             renderContext.M = (float)MSlider.Value;
             renderContext.K = 0;
+
+            if (TexturePickerRadio.IsChecked != true) renderContext.Texture = null;
+
             canvas.Render(scene, renderContext);
 
             stopwatch.Start();
@@ -71,6 +84,21 @@ namespace GrafikaKomputerowa2
         private void LightZSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             scene.MoveLight((float)e.NewValue);
+
+            e.Handled = true;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                CheckFileExists = true,
+                Filter = "Image |*.jpg;*.bmp;*.png",
+                InitialDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+            };
+            if (openFileDialog.ShowDialog() != true) return;
+
+            renderContext.Texture = new Texture(openFileDialog.FileName);
 
             e.Handled = true;
         }

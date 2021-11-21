@@ -29,7 +29,7 @@ namespace GrafikaKomputerowa2
 
         public void AnimateLight(float dt)
         {
-            t += dt;
+            t += dt / 10;
             lightRadius = (float)Math.Sin(t / 25.0f) * radius;
             LightSource.Position.X = lightRadius * (float)Math.Cos(t);
             LightSource.Position.Y = lightRadius * (float)Math.Sin(t);
@@ -40,5 +40,7 @@ namespace GrafikaKomputerowa2
             var z = (float)Math.Sqrt(radius * radius - x * x - y * y);
             return new(x, y, z);
         }
+
+        public (float u, float v) GetUV(float x, float y) => (0.5f * (x / radius + 1), 0.5f * (y / radius + 1));
     }
 }

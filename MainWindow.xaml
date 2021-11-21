@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:GrafikaKomputerowa2"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
@@ -18,6 +19,7 @@
         <Grid Grid.Column="1" Margin="5" Background="LightGray">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -62,6 +64,24 @@
                         <Label Content="{Binding ElementName=LightZSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" Width="30" />
                         <Slider x:Name="LightZSlider" Minimum="20" Maximum="200" TickFrequency="5" IsSnapToTickEnabled="True" Value="100" Margin="5" ValueChanged="LightZSlider_ValueChanged" />
                     </DockPanel>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Scene" Grid.Row="4">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" x:Name="WireframeCheckbox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5">
+                        <Label Content="Show Wireframe" VerticalAlignment="Center" />
+                    </CheckBox>
+                    <RadioButton Grid.Row="1" x:Name="ColorPickerRadio" GroupName="color" VerticalContentAlignment="Center" HorizontalContentAlignment="Stretch">
+                        <xctk:ColorPicker x:Name="ColorPicker" IsEnabled="{Binding ElementName=ColorPickerRadio, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" SelectedColor="DarkGray" />
+                    </RadioButton>
+                    <RadioButton Grid.Row="2" x:Name="TexturePickerRadio" GroupName="color" VerticalContentAlignment="Center" IsChecked="True">
+                        <Button Content="Choose Texture..." IsEnabled="{Binding ElementName=TexturePickerRadio, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" Click="Button_Click" />
+                    </RadioButton>
                 </Grid>
             </GroupBox>
         </Grid>
