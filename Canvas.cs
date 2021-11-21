@@ -3,6 +3,7 @@ using GrafikaKomputerowa2.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
@@ -81,7 +82,8 @@ namespace GrafikaKomputerowa2
 
                 Clear();
 
-                var color = GetColor(Colors.Black);
+                var color = GetColor(Colors.Red);
+                var color2 = GetColor(Colors.Black);
                 foreach (var triangle in triangles)
                 {
                     int width = (int)WriteableBitmap.Width;
@@ -92,6 +94,8 @@ namespace GrafikaKomputerowa2
                     int y1 = (int)triangle[1].Y + height / 2;
                     int x2 = (int)triangle[2].X + width / 2;
                     int y2 = (int)triangle[2].Y + height / 2;
+
+                    FillTriangle(triangle, color2);
 
                     DrawLine(x0, y0, x1, y1, color);
                     DrawLine(x1, y1, x2, y2, color);
@@ -123,6 +127,11 @@ namespace GrafikaKomputerowa2
 
         private void DrawLine(int x1, int y1, int x2, int y2, int color)
         {
+            var a = x1;
+            var b = y1;
+            var c = x2;
+            var d = y2;
+
             var dx = Math.Abs(x2 - x1);
             var sx = x1 < x2 ? 1 : -1;
             var dy = -Math.Abs(y2 - y1);
@@ -143,6 +152,92 @@ namespace GrafikaKomputerowa2
                 {
                     err += dx;
                     y1 += sy;
+                }
+            }
+        }
+
+        private class AetEntry
+        {
+            public float x;
+            public float dx;
+            public Vec3 end;
+
+            public AetEntry(Vec3 v1, Vec3 v2)
+            {
+                x = v1.X;
+                dx = (v2.X - v1.X) / (v2.Y - v1.Y);
+                end = v2;
+
+                if (float.IsInfinity(dx)) x = v2.X;
+            }
+        }
+
+        private void FillTriangle(Triangle triangle, int color)
+        {
+            var width = (int)WriteableBitmap.Width;
+            var height = (int)WriteableBitmap.Height;
+
+            var vertices = triangle.Vertices.ToList();
+            var ind = vertices
+                .Select((v, i) => (v, i))
+                .OrderBy(p => p.v.Y)
+                .Select(p => p.i)
+                .ToList();
+
+            var yMin = vertices[ind[0]].Y;
+            var yMax = vertices[ind[2]].Y;
+            var AET = new List<AetEntry>()
+            {
+                new(vertices[ind[0]], vertices[ind[1]]),
+                new(vertices[ind[0]], vertices[ind[2]]),
+            };
+
+            if (float.IsInfinity(AET[0].dx))
+            {
+                for (var x = (int)AET[0].x; x <= AET[1].x; x++)
+                    PutPixel(x + width / 2, (int)yMin + height / 2, color);
+
+                AET[0] = new(AET[0].end, vertices[ind[2]]);
+            }
+
+            if (float.IsInfinity(AET[1].dx))
+            {
+                for (var x = (int)AET[0].x; x <= AET[1].x; x++)
+                    PutPixel(x + width / 2, (int)yMin + height / 2, color);
+
+                AET[1] = new(AET[1].end, vertices[ind[2]]);
+            }
+
+            for (int y = (int)yMin; y <= yMax; y++)
+            {
+                AET.Sort((e1, e2) => (int)(e1.x - e2.x));
+
+                for (var x = (int)AET[0].x; x <= AET[1].x; x++)
+                    PutPixel(x + width / 2, y + height / 2, color);
+
+                foreach (var e in AET) e.x += e.dx;
+
+                foreach (var v in AET.Select(ae => ae.end).Where(v => (int)v.Y == y).ToList())
+                {
+                    AET.RemoveAll(e => e.end == v);
+
+                    var i = vertices.IndexOf(v);
+                    Vec3 previous;
+                    if (i == 0)
+                        previous = vertices[2];
+                    else
+                        previous = vertices[i - 1];
+                    Vec3 next;
+                    if (i == 2)
+                        next = vertices[0];
+                    else
+                        next = vertices[i + 1];
+
+                    if (previous.Y >= v.Y)
+                        AET.Add(new AetEntry(v, previous));
+
+                    if (next.Y >= v.Y)
+                        AET.Add(new AetEntry(v, next));
                 }
             }
         }

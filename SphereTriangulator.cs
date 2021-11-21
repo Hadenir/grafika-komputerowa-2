@@ -11,8 +11,8 @@ namespace GrafikaKomputerowa2
         {
             precisionFactor = Math.Clamp(precisionFactor, 0, 1);
 
-            var parallelsCount = (int)(precisionFactor * 23 + 2);
-            var meridiansCount = (int)(precisionFactor * 22 + 3);
+            var parallelsCount = (int)(precisionFactor * 18 + 2);
+            var meridiansCount = (int)(precisionFactor * 17 + 3);
 
             var vertices = new List<Vec3> { Utils.SphericalToCartesian(0, 0, radius) };
             for (var j = 1; j < parallelsCount; j++)
