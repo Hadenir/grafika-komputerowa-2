@@ -8,6 +8,10 @@ namespace GrafikaKomputerowa2.Algebra
         public float Y { get; set; }
         public float Z { get; set; }
 
+        public float R => X;
+        public float G => Y;
+        public float B => Z;
+
         public float LengthSq => (X * X) + (Y * Y) + (Z * Z);
         public float Length => (float)Math.Sqrt(LengthSq);
 
@@ -52,6 +56,8 @@ namespace GrafikaKomputerowa2.Algebra
             (Y * other.Z) - (Z * other.Y),
             (Z * other.X) - (X * other.Z),
             (X * other.Y) - (Y * other.X));
+
+        public int ToInt() => ((int)Math.Clamp(X * 255, 0, 1) << 16) | ((int)Math.Clamp(Y * 255, 0, 1) << 8) | (int)Math.Clamp(Z * 255, 0, 1);
 
         private Vec3 Clone() => new(X, Y, Z);
 
