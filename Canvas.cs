@@ -86,20 +86,20 @@ namespace GrafikaKomputerowa2
                 var color2 = GetColor(Colors.Black);
                 foreach (var triangle in triangles)
                 {
-                    int width = (int)WriteableBitmap.Width;
-                    int height = (int)WriteableBitmap.Height;
-                    int x0 = (int)triangle[0].X + width / 2;
-                    int y0 = (int)triangle[0].Y + height / 2;
-                    int x1 = (int)triangle[1].X + width / 2;
-                    int y1 = (int)triangle[1].Y + height / 2;
-                    int x2 = (int)triangle[2].X + width / 2;
-                    int y2 = (int)triangle[2].Y + height / 2;
+                    //int width = (int)WriteableBitmap.Width;
+                    //int height = (int)WriteableBitmap.Height;
+                    //int x0 = (int)triangle[0].X + width / 2;
+                    //int y0 = (int)triangle[0].Y + height / 2;
+                    //int x1 = (int)triangle[1].X + width / 2;
+                    //int y1 = (int)triangle[1].Y + height / 2;
+                    //int x2 = (int)triangle[2].X + width / 2;
+                    //int y2 = (int)triangle[2].Y + height / 2;
 
                     FillTriangle(triangle, color2);
 
-                    DrawLine(x0, y0, x1, y1, color);
-                    DrawLine(x1, y1, x2, y2, color);
-                    DrawLine(x2, y2, x0, y0, color);
+                    //DrawLine(x0, y0, x1, y1, color);
+                    //DrawLine(x1, y1, x2, y2, color);
+                    //DrawLine(x2, y2, x0, y0, color);
                 }
 
                 MarkDirty();
@@ -172,10 +172,13 @@ namespace GrafikaKomputerowa2
             }
         }
 
-        private void FillTriangle(Triangle triangle, int color)
+        private unsafe void FillTriangle(Triangle triangle, int color)
         {
             var width = (int)WriteableBitmap.Width;
             var height = (int)WriteableBitmap.Height;
+            int* backBuffer = (int*)WriteableBitmap.BackBuffer;
+
+            int GetIndex(int x, int y) => x + (width / 2) + ((y + height / 2) * WriteableBitmap.BackBufferStride / 4);
 
             var vertices = triangle.Vertices.ToList();
             var ind = vertices
@@ -194,16 +197,20 @@ namespace GrafikaKomputerowa2
 
             if (float.IsInfinity(AET[0].dx))
             {
-                for (var x = (int)AET[0].x; x <= AET[1].x; x++)
-                    PutPixel(x + width / 2, (int)yMin + height / 2, color);
+                if (yMin >= -height / 2 && yMin < height / 2)
+                    for (var x = (int)AET[0].x; x <= AET[1].x; x++)
+                        if (x >= -width / 2 && x < width / 2)
+                            backBuffer[GetIndex(x, (int)yMin)] = color;
 
                 AET[0] = new(AET[0].end, vertices[ind[2]]);
             }
 
             if (float.IsInfinity(AET[1].dx))
             {
-                for (var x = (int)AET[0].x; x <= AET[1].x; x++)
-                    PutPixel(x + width / 2, (int)yMin + height / 2, color);
+                if (yMin >= -height / 2 && yMin < height / 2)
+                    for (var x = (int)AET[0].x; x <= AET[1].x; x++)
+                        if (x >= -width / 2 && x < width / 2)
+                            backBuffer[GetIndex(x, (int)yMin)] = color;
 
                 AET[1] = new(AET[1].end, vertices[ind[2]]);
             }
@@ -212,8 +219,10 @@ namespace GrafikaKomputerowa2
             {
                 AET.Sort((e1, e2) => (int)(e1.x - e2.x));
 
-                for (var x = (int)AET[0].x; x <= AET[1].x; x++)
-                    PutPixel(x + width / 2, y + height / 2, color);
+                if (y >= -height / 2 && y < height / 2)
+                    for (var x = (int)AET[0].x; x <= AET[1].x; x++)
+                        if (x >= -width / 2 && x < width / 2)
+                            backBuffer[GetIndex(x, y)] = color;
 
                 foreach (var e in AET) e.x += e.dx;
 
