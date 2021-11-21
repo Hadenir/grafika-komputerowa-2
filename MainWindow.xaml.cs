@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GrafikaKomputerowa2.Algebra;
+using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 
@@ -9,11 +11,16 @@ namespace GrafikaKomputerowa2
         private readonly Canvas canvas = new();
         private readonly Scene scene = new();
 
+        private readonly RenderContext renderContext = new();
+
+        private readonly Stopwatch stopwatch = new();
+
         public MainWindow()
         {
             InitializeComponent();
 
             CompositionTarget.Rendering += Render;
+            stopwatch.Start();
         }
 
         private void PrepareScene()
@@ -27,7 +34,19 @@ namespace GrafikaKomputerowa2
 
         private void Render(object? sender, EventArgs e)
         {
-            canvas.Render(scene.Triangles);
+            stopwatch.Stop();
+
+            if (AnimateLightCheckox.IsChecked == true)
+                scene.AnimateLight((float)stopwatch.Elapsed.TotalSeconds);
+
+            renderContext.Color = new Vec3(1, 0, 0);
+            renderContext.Kd = (float)(KdSlider.Value / 100);
+            renderContext.Ks = (float)(KsSlider.Value / 100);
+            renderContext.M = (float)MSlider.Value;
+            renderContext.K = 0;
+            canvas.Render(scene, renderContext);
+
+            stopwatch.Start();
         }
 
         private void CanvasContainer_SizeChanged(object sender, SizeChangedEventArgs e)

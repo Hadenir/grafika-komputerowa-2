@@ -16,11 +16,42 @@
             <Image x:Name="CanvasImage" />
         </Grid>
         <Grid Grid.Column="1" Margin="5" Background="LightGray">
-            <GroupBox Header="Triangulation" Margin="5"  VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <GroupBox Grid.Column="0" Grid.Row="1" Header="Triangulation" Margin="5">
                 <DockPanel VerticalAlignment="Center">
                     <Label Content="{Binding ElementName=TriangulationPrecisionSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" Width="30" />
                     <Slider x:Name="TriangulationPrecisionSlider" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="50" Margin="5" ValueChanged="TriangulationPrecisionSlider_ValueChanged" />
                 </DockPanel>
+            </GroupBox>
+            <GroupBox Grid.Column="0" Grid.Row="2" Header="Rendering" Margin="5">
+                <UniformGrid Columns="3">
+                    <DockPanel Grid.Column="0" VerticalAlignment="Center">
+                        <Label Content="Kd" DockPanel.Dock="Top" HorizontalAlignment="Center" />
+                        <Label Content="{Binding ElementName=KdSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Bottom" HorizontalAlignment="Center" />
+                        <Slider x:Name="KdSlider" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="50" />
+                    </DockPanel>
+                    <DockPanel Grid.Column="1" VerticalAlignment="Center">
+                        <Label Content="Ks" DockPanel.Dock="Top" HorizontalAlignment="Center" />
+                        <Label Content="{Binding ElementName=KsSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Bottom" HorizontalAlignment="Center" />
+                        <Slider x:Name="KsSlider" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="50" />
+                    </DockPanel>
+                    <DockPanel Grid.Column="2" VerticalAlignment="Center">
+                        <Label Content="M" DockPanel.Dock="Top" HorizontalAlignment="Center" />
+                        <Label Content="{Binding ElementName=MSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Bottom" HorizontalAlignment="Center" />
+                        <Slider x:Name="MSlider" Minimum="1" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" Value="50" />
+                    </DockPanel>
+                </UniformGrid>
+            </GroupBox>
+            <GroupBox Grid.Row="3" Header="Light">
+                <CheckBox x:Name="AnimateLightCheckox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5">
+                    <Label Content="Animate Light" VerticalAlignment="Center" />
+                </CheckBox>
             </GroupBox>
         </Grid>
     </Grid>

@@ -50,16 +50,20 @@ namespace GrafikaKomputerowa2.Algebra
             return Clone() / length;
         }
 
-        public Vec3 Dot(Vec3 other) => new(X * other.X, Y * other.Y, Z * other.Z);
+        public float Dot(Vec3 other) => X * other.X + Y * other.Y + Z * other.Z;
 
         public Vec3 Cross(Vec3 other) => new(
             (Y * other.Z) - (Z * other.Y),
             (Z * other.X) - (X * other.Z),
             (X * other.Y) - (Y * other.X));
 
-        public int ToInt() => ((int)Math.Clamp(X * 255, 0, 1) << 16) | ((int)Math.Clamp(Y * 255, 0, 1) << 8) | (int)Math.Clamp(Z * 255, 0, 1);
+        public int ToInt() => ((int)Math.Clamp(X * 255, 0, 255) << 16) | ((int)Math.Clamp(Y * 255, 0, 255) << 8) | (int)Math.Clamp(Z * 255, 0, 255);
 
         private Vec3 Clone() => new(X, Y, Z);
+
+        public static Vec3 Zero() => new(0, 0, 0);
+
+        public static Vec3 One() => new(1, 1, 1);
 
         public static Vec3 operator -(Vec3 v) => new(-v.X, -v.Y, -v.Z);
 
@@ -70,5 +74,7 @@ namespace GrafikaKomputerowa2.Algebra
         public static Vec3 operator *(float c, Vec3 v) => new(c * v.X, c * v.Y, c * v.Z);
 
         public static Vec3 operator /(Vec3 v, float c) => new(v.X / c, v.Y / c, v.Z / c);
+
+        public static Vec3 operator *(Vec3 v1, Vec3 v2) => new(v1.X * v2.X, v1.Y * v2.Y, v1.Z * v2.Z);
     }
 }
