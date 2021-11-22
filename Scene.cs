@@ -9,17 +9,19 @@ namespace GrafikaKomputerowa2
     public class Scene
     {
         private float radius;
-        private float lightRadius;
         private float t;
 
         public IEnumerable<Triangle> Triangles { get; private set; } = Enumerable.Empty<Triangle>();
         public LightSource LightSource { get; private set; } = new();
+
+        public LightSource Reflector { get; private set; } = new();
 
         public void PrepareScene(float radius, float precisionFactor, float lightZ)
         {
             this.radius = radius;
             Triangles = SphereTriangulator.CreateSemiSphere(radius, precisionFactor);
             LightSource = new LightSource(new Vec3(0, 0, radius + lightZ), new Vec3(1, 1, 1));
+            Reflector = new LightSource(new Vec3(0, 0, radius + 100), new Vec3(1, 0, 0));
         }
 
         public void MoveLight(float newZ)
@@ -30,7 +32,7 @@ namespace GrafikaKomputerowa2
         public void AnimateLight(float dt)
         {
             t += dt / 10;
-            lightRadius = (float)Math.Sin(t / 25.0f) * radius;
+            var lightRadius = (float)Math.Sin(t / 25.0f) * radius;
             LightSource.Position.X = lightRadius * (float)Math.Cos(t);
             LightSource.Position.Y = lightRadius * (float)Math.Sin(t);
         }

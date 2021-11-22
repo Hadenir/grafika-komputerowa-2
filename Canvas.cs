@@ -21,6 +21,10 @@ namespace GrafikaKomputerowa2
         public float Ks { get; set; }
         public float M { get; set; }
         public float K { get; set; }
+        public bool SunEnabled { get; set; } = true;
+        public bool ReflectorEnabled { get; set; } = false;
+        public (float x, float y) ReflectorTarget { get; set; }
+        public float ReflectorM { get; set; }
     }
 
     public class Canvas
@@ -29,7 +33,9 @@ namespace GrafikaKomputerowa2
 
         public WriteableBitmap WriteableBitmap { get; private set; }
 
-        public Canvas() : this(1, 1) { }
+        public Canvas() : this(1, 1)
+        {
+        }
 
         public Canvas(double width, double height)
         {
@@ -92,14 +98,15 @@ namespace GrafikaKomputerowa2
             int height = WriteableBitmap.PixelHeight;
             var triangles = scene.Triangles;
             var lightSource = scene.LightSource;
+            var reflector = scene.Reflector;
 
             int CalculateColor(int x, int y)
             {
                 var point = scene.GetPointOnSurface(x, y);
                 var N = (point - Vec3.Zero()).Normalized();
                 var V = new Vec3(0, 0, 1);
-                var L = (scene.LightSource.Position - point).Normalized();
-                var R = 2 * N.Dot(L) * N - L;
+                var L = (lightSource.Position - point).Normalized();
+                var R = (2 * N.Dot(L) * N - L).Normalized();
                 var (u, v) = scene.GetUV(x, y);
 
                 Vec3 objColor;
@@ -121,8 +128,22 @@ namespace GrafikaKomputerowa2
                     N = context.K * N + (1 - context.K) * M * context.NormalMap.GetPixel(u, v);
                 }
 
-                Vec3 color = Math.Clamp(N.Dot(L), 0, 1) * context.Kd * scene.LightSource.Color * objColor
-                    + (float)Math.Clamp(Math.Pow(V.Dot(R), context.M), 0, 1) * context.Ks * scene.LightSource.Color * objColor;
+                Vec3 Lr = (reflector.Position - point).Normalized();
+                var Rr = (2 * N.Dot(Lr) * N - Lr).Normalized();
+                Vec3 reflectorTarget = scene.GetPointOnSurface(context.ReflectorTarget.x, context.ReflectorTarget.y);
+                var Vr = (reflectorTarget - reflector.Position).Normalized();
+                Vec3 Ir = Vec3.Zero();
+                if (float.IsFinite(reflectorTarget.X) && context.ReflectorEnabled)
+                    Ir = (float)Math.Clamp(Math.Pow((-Lr).Dot(Vr), context.ReflectorM), 0, 1) * reflector.Color;
+
+                var sun = 1.0f;
+                if (!context.SunEnabled)
+                    sun = 0.0f;
+
+                Vec3 color = sun * Math.Clamp(N.Dot(L), 0, 1) * context.Kd * lightSource.Color * objColor
+                    + sun * (float)Math.Clamp(Math.Pow(V.Dot(R), context.M), 0, 1) * context.Ks * lightSource.Color * objColor
+                    + Math.Clamp(N.Dot(Lr), 0, 1) * context.Kd * objColor * Ir
+                    + (float)Math.Clamp(Math.Pow(V.Dot(Rr), context.M), 0, 1) * context.Ks * objColor * Ir;
 
                 return color.ToInt();
             }

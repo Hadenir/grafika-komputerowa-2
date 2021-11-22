@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 using GrafikaKomputerowa2.Graphics;
 using System.IO;
+using System.Windows.Input;
 
 namespace GrafikaKomputerowa2
 {
@@ -55,6 +56,9 @@ namespace GrafikaKomputerowa2
             renderContext.Ks = (float)(KsSlider.Value / 100);
             renderContext.M = (float)MSlider.Value;
             renderContext.K = (float)(KSlider.Value / 100);
+            renderContext.ReflectorEnabled = ReflectorCheckbox.IsChecked == true;
+            renderContext.SunEnabled = SunCheckbox.IsChecked == true;
+            renderContext.ReflectorM = 10;
 
             if (TexturePickerRadio.IsChecked != true) renderContext.Texture = null;
             if (NormalMapCheckbox.IsChecked != true) renderContext.NormalMap = null;
@@ -116,6 +120,21 @@ namespace GrafikaKomputerowa2
             if (openFileDialog.ShowDialog() != true) return;
 
             renderContext.NormalMap = Texture.FromNormalMap(openFileDialog.FileName);
+
+            e.Handled = true;
+        }
+
+        private void CanvasContainer_MouseMove(object sender, MouseEventArgs e)
+        {
+            var mousePos = e.GetPosition(CanvasContainer);
+            var x = (float)mousePos.X;
+            var y = (float)mousePos.Y;
+
+            var width = (float)CanvasContainer.ActualWidth;
+            var height = (float)CanvasContainer.ActualHeight;
+            if (x < 0 || y < 0 || x >= width || y >= height) return;
+
+            renderContext.ReflectorTarget = (x - width / 2, y - height / 2);
 
             e.Handled = true;
         }

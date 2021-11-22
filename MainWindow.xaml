@@ -13,12 +13,13 @@
             <ColumnDefinition Width="350" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" x:Name="CanvasContainer" Margin="5" VerticalAlignment="Stretch"
-                    SizeChanged="CanvasContainer_SizeChanged">
+                    SizeChanged="CanvasContainer_SizeChanged" MouseMove="CanvasContainer_MouseMove">
             <Image x:Name="CanvasImage" />
         </Grid>
         <Grid Grid.Column="1" Margin="5" Background="LightGray">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -100,6 +101,20 @@
                         <Label Content="{Binding ElementName=KSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" Width="30" />
                         <Slider x:Name="KSlider" Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="0" Margin="5" IsEnabled="{Binding ElementName=NormalMapCheckbox, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Reflector" Grid.Row="6" Margin="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" x:Name="ReflectorCheckbox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5" IsChecked="False">
+                        <Label Content="Enable Reflector" />
+                    </CheckBox>
+                    <CheckBox Grid.Row="1" x:Name="SunCheckbox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5" IsChecked="True">
+                        <Label Content="Enable Sun" />
+                    </CheckBox>
                 </Grid>
             </GroupBox>
         </Grid>
