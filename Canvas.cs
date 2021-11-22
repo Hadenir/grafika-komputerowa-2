@@ -138,16 +138,15 @@ namespace GrafikaKomputerowa2
                 if (context.ReflectorEnabled)
                 {
                     Vec3 reflectorTarget = scene.GetPointOnSurface(context.ReflectorTarget.x, context.ReflectorTarget.y);
-                    var Vr = (reflectorTarget - reflector.Position).Normalized();
-                    if (float.IsFinite(reflectorTarget.Z))
-                    {
-                        Vec3 Lr = (reflector.Position - point).Normalized();
-                        var Rr = (2 * N.Dot(Lr) * N - Lr).Normalized();
-                        var Ir = (float)Math.Pow((-Lr).Dot(Vr).Clamp(), context.ReflectorM) * reflector.Color;
+                    if (!float.IsFinite(reflectorTarget.Z)) reflectorTarget = scene.GetPointOnSurface(0, 0);
 
-                        color += N.Dot(Lr).Clamp() * context.Kd * objColor * Ir
-                                + (float)Math.Pow(V.Dot(Rr).Clamp(), context.M) * context.Ks * objColor * Ir;
-                    }
+                    var Vr = (reflectorTarget - reflector.Position).Normalized();
+                    Vec3 Lr = (reflector.Position - point).Normalized();
+                    var Rr = (2 * N.Dot(Lr) * N - Lr).Normalized();
+                    var Ir = (float)Math.Pow((-Lr).Dot(Vr).Clamp(), context.ReflectorM) * reflector.Color;
+
+                    color += N.Dot(Lr).Clamp() * context.Kd * objColor * Ir
+                            + (float)Math.Pow(V.Dot(Rr).Clamp(), context.M) * context.Ks * objColor * Ir;
                 }
 
                 return color.ToInt();
