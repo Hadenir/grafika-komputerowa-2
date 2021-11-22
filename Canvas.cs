@@ -133,7 +133,7 @@ namespace GrafikaKomputerowa2
                 Vec3 reflectorTarget = scene.GetPointOnSurface(context.ReflectorTarget.x, context.ReflectorTarget.y);
                 var Vr = (reflectorTarget - reflector.Position).Normalized();
                 Vec3 Ir = Vec3.Zero();
-                if (float.IsFinite(reflectorTarget.X) && context.ReflectorEnabled)
+                if (float.IsFinite(reflectorTarget.Z) && context.ReflectorEnabled)
                     Ir = (float)Math.Clamp(Math.Pow((-Lr).Dot(Vr), context.ReflectorM), 0, 1) * reflector.Color;
 
                 var sun = 1.0f;

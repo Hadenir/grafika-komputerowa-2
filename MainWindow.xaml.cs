@@ -58,7 +58,7 @@ namespace GrafikaKomputerowa2
             renderContext.K = (float)(KSlider.Value / 100);
             renderContext.ReflectorEnabled = ReflectorCheckbox.IsChecked == true;
             renderContext.SunEnabled = SunCheckbox.IsChecked == true;
-            renderContext.ReflectorM = 10;
+            renderContext.ReflectorM = (float)MrSlider.Value;
 
             if (TexturePickerRadio.IsChecked != true) renderContext.Texture = null;
             if (NormalMapCheckbox.IsChecked != true) renderContext.NormalMap = null;

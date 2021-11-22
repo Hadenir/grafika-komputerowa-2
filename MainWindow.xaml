@@ -108,13 +108,19 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <CheckBox Grid.Row="0" x:Name="ReflectorCheckbox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5" IsChecked="False">
-                        <Label Content="Enable Reflector" />
-                    </CheckBox>
-                    <CheckBox Grid.Row="1" x:Name="SunCheckbox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5" IsChecked="True">
+                    <CheckBox Grid.Row="0" x:Name="SunCheckbox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5" IsChecked="True">
                         <Label Content="Enable Sun" />
                     </CheckBox>
+                    <CheckBox Grid.Row="1" x:Name="ReflectorCheckbox" DockPanel.Dock="Left" VerticalContentAlignment="Center" Margin="5" IsChecked="False">
+                        <Label Content="Enable Reflector" />
+                    </CheckBox>
+                    <DockPanel Grid.Row="2" VerticalAlignment="Center">
+                        <Label Content="Mr" DockPanel.Dock="Left" />
+                        <Label Content="{Binding ElementName=MrSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" Width="30" />
+                        <Slider x:Name="MrSlider" Minimum="1" Maximum="50" TickFrequency="5" IsSnapToTickEnabled="True" Value="10" Margin="5" IsEnabled="{Binding ElementName=ReflectorCheckbox, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
                 </Grid>
             </GroupBox>
         </Grid>
