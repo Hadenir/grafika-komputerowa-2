@@ -119,7 +119,7 @@
                     <DockPanel Grid.Row="2" VerticalAlignment="Center">
                         <Label Content="Mr" DockPanel.Dock="Left" />
                         <Label Content="{Binding ElementName=MrSlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" DockPanel.Dock="Right" Width="30" />
-                        <Slider x:Name="MrSlider" Minimum="1" Maximum="50" TickFrequency="5" IsSnapToTickEnabled="True" Value="10" Margin="5" IsEnabled="{Binding ElementName=ReflectorCheckbox, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" />
+                        <Slider x:Name="MrSlider" Minimum="1" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="10" Margin="5" IsEnabled="{Binding ElementName=ReflectorCheckbox, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" />
                     </DockPanel>
                 </Grid>
             </GroupBox>
