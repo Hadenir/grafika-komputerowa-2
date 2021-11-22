@@ -30,6 +30,7 @@ namespace GrafikaKomputerowa2
     public class Canvas
     {
         private readonly int backgroundColor = GetColor(Colors.White);
+        private unsafe int* _backBuffer = null;
 
         public WriteableBitmap WriteableBitmap { get; private set; }
 
@@ -151,25 +152,31 @@ namespace GrafikaKomputerowa2
             try
             {
                 WriteableBitmap.Lock();
-
-                Clear();
-
-                var color = GetColor(Colors.LightGray);
-                foreach (var triangle in triangles)
+                unsafe
                 {
-                    FillTriangle(triangle, CalculateColor);
-                    if (context.Wireframe)
+                    _backBuffer = (int*)WriteableBitmap.BackBuffer.ToPointer();
+
+                    Clear();
+
+                    var color = GetColor(Colors.LightGray);
+                    foreach (var triangle in triangles)
                     {
-                        int x0 = (int)triangle[0].X + width / 2;
-                        int y0 = (int)triangle[0].Y + height / 2;
-                        int x1 = (int)triangle[1].X + width / 2;
-                        int y1 = (int)triangle[1].Y + height / 2;
-                        int x2 = (int)triangle[2].X + width / 2;
-                        int y2 = (int)triangle[2].Y + height / 2;
-                        DrawLine(x0, y0, x1, y1, color);
-                        DrawLine(x1, y1, x2, y2, color);
-                        DrawLine(x2, y2, x0, y0, color);
+                        FillTriangle(triangle, CalculateColor);
+                        if (context.Wireframe)
+                        {
+                            int x0 = (int)triangle[0].X + width / 2;
+                            int y0 = (int)triangle[0].Y + height / 2;
+                            int x1 = (int)triangle[1].X + width / 2;
+                            int y1 = (int)triangle[1].Y + height / 2;
+                            int x2 = (int)triangle[2].X + width / 2;
+                            int y2 = (int)triangle[2].Y + height / 2;
+                            DrawLine(x0, y0, x1, y1, color);
+                            DrawLine(x1, y1, x2, y2, color);
+                            DrawLine(x2, y2, x0, y0, color);
+                        }
                     }
+
+                    _backBuffer = null;
                 }
 
                 MarkDirty();
@@ -183,25 +190,13 @@ namespace GrafikaKomputerowa2
         private void MarkDirty() => WriteableBitmap.AddDirtyRect(new Int32Rect(0, 0, WriteableBitmap.PixelWidth, WriteableBitmap.PixelHeight));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void PutPixel(int x, int y, int color)
+        private unsafe void PutPixel(int x, int y, int color)
         {
-            if (x < 0 || y < 0 || x >= WriteableBitmap.PixelWidth || y >= WriteableBitmap.PixelHeight) return;
-
-            unsafe
-            {
-                int* backBuffer = (int*)WriteableBitmap.BackBuffer;
-                int index = x + (y * WriteableBitmap.BackBufferStride / 4);
-                backBuffer[index] = color;
-            }
+            _backBuffer[x + y * WriteableBitmap.PixelWidth] = color;
         }
 
         private void DrawLine(int x1, int y1, int x2, int y2, int color)
         {
-            var a = x1;
-            var b = y1;
-            var c = x2;
-            var d = y2;
-
             var dx = Math.Abs(x2 - x1);
             var sx = x1 < x2 ? 1 : -1;
             var dy = -Math.Abs(y2 - y1);
