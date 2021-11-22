@@ -3,8 +3,6 @@ using GrafikaKomputerowa2.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -129,22 +127,28 @@ namespace GrafikaKomputerowa2
                     N = context.K * N + (1 - context.K) * M * context.NormalMap.GetPixel(u, v);
                 }
 
-                Vec3 Lr = (reflector.Position - point).Normalized();
-                var Rr = (2 * N.Dot(Lr) * N - Lr).Normalized();
-                Vec3 reflectorTarget = scene.GetPointOnSurface(context.ReflectorTarget.x, context.ReflectorTarget.y);
-                var Vr = (reflectorTarget - reflector.Position).Normalized();
-                Vec3 Ir = Vec3.Zero();
-                if (float.IsFinite(reflectorTarget.Z) && context.ReflectorEnabled)
-                    Ir = (float)Math.Clamp(Math.Pow((-Lr).Dot(Vr), context.ReflectorM), 0, 1) * reflector.Color;
+                Vec3 color = Vec3.Zero();
 
-                var sun = 1.0f;
-                if (!context.SunEnabled)
-                    sun = 0.0f;
+                if (context.SunEnabled)
+                {
+                    color += N.Dot(L).Clamp() * context.Kd * lightSource.Color * objColor
+                             + (float)Math.Pow(V.Dot(R).Clamp(), context.M) * context.Ks * lightSource.Color * objColor;
+                }
 
-                Vec3 color = sun * Math.Clamp(N.Dot(L), 0, 1) * context.Kd * lightSource.Color * objColor
-                    + sun * (float)Math.Clamp(Math.Pow(V.Dot(R), context.M), 0, 1) * context.Ks * lightSource.Color * objColor
-                    + Math.Clamp(N.Dot(Lr), 0, 1) * context.Kd * objColor * Ir
-                    + (float)Math.Clamp(Math.Pow(V.Dot(Rr), context.M), 0, 1) * context.Ks * objColor * Ir;
+                if (context.ReflectorEnabled)
+                {
+                    Vec3 reflectorTarget = scene.GetPointOnSurface(context.ReflectorTarget.x, context.ReflectorTarget.y);
+                    var Vr = (reflectorTarget - reflector.Position).Normalized();
+                    if (float.IsFinite(reflectorTarget.Z))
+                    {
+                        Vec3 Lr = (reflector.Position - point).Normalized();
+                        var Rr = (2 * N.Dot(Lr) * N - Lr).Normalized();
+                        var Ir = (float)Math.Pow((-Lr).Dot(Vr).Clamp(), context.ReflectorM) * reflector.Color;
+
+                        color += N.Dot(Lr).Clamp() * context.Kd * objColor * Ir
+                                + (float)Math.Pow(V.Dot(Rr).Clamp(), context.M) * context.Ks * objColor * Ir;
+                    }
+                }
 
                 return color.ToInt();
             }
@@ -189,7 +193,6 @@ namespace GrafikaKomputerowa2
 
         private void MarkDirty() => WriteableBitmap.AddDirtyRect(new Int32Rect(0, 0, WriteableBitmap.PixelWidth, WriteableBitmap.PixelHeight));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private unsafe void PutPixel(int x, int y, int color)
         {
             _backBuffer[x + y * WriteableBitmap.PixelWidth] = color;
@@ -322,5 +325,10 @@ namespace GrafikaKomputerowa2
         private static int GetColor(byte r, byte g, byte b) => (r << 16) | (g << 8) | b;
 
         private static int GetColor(Color color) => GetColor(color.R, color.G, color.B);
+    }
+
+    internal static class FloatExtensions
+    {
+        public static float Clamp(this float f) => Math.Clamp(f, 0, 1);
     }
 }

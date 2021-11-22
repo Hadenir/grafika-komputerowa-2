@@ -21,7 +21,7 @@ namespace GrafikaKomputerowa2
             this.radius = radius;
             Triangles = SphereTriangulator.CreateSemiSphere(radius, precisionFactor);
             LightSource = new LightSource(new Vec3(0, 0, radius + lightZ), new Vec3(1, 1, 1));
-            Reflector = new LightSource(new Vec3(0, 0, 2.5f * radius), new Vec3(1, 0, 0));
+            Reflector = new LightSource(new Vec3(0, 0, 2 * radius), new Vec3(1, 0, 0));
         }
 
         public void MoveLight(float newZ)
