@@ -4,7 +4,9 @@
     {
         private readonly float[] elements = new float[9];
 
-        public Mat3() : this(0, 0, 0, 0, 0, 0, 0, 0, 0) { }
+        public Mat3() : this(0, 0, 0, 0, 0, 0, 0, 0, 0)
+        {
+        }
 
         public Mat3(
             float e1, float e2, float e3,
@@ -24,6 +26,9 @@
 
         public static Mat3 FromRows(Vec3 v1, Vec3 v2, Vec3 v3)
             => new(v1.X, v1.Y, v1.Z, v2.X, v2.Y, v2.Z, v3.X, v3.Y, v3.Z);
+
+        public static Mat3 FromColumns(Vec3 v1, Vec3 v2, Vec3 v3)
+            => new(v1.X, v2.X, v3.X, v1.Y, v2.Y, v3.Y, v1.Z, v2.Z, v3.Z);
 
         public ref float this[int i] => ref elements[i];
         public ref float this[int i, int j] => ref elements[i + (j * 3)];

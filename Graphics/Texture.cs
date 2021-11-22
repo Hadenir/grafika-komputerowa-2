@@ -19,7 +19,7 @@ namespace GrafikaKomputerowa2.Graphics
 
         public static Texture FromFile(string path)
         {
-            var bitmap = new Bitmap(path);
+            using var bitmap = new Bitmap(path);
             var width = bitmap.Width;
             var height = bitmap.Height;
 
@@ -38,7 +38,7 @@ namespace GrafikaKomputerowa2.Graphics
 
         public static Texture FromNormalMap(string path)
         {
-            var bitmap = new Bitmap(path);
+            using var bitmap = new Bitmap(path);
             var width = bitmap.Width;
             var height = bitmap.Height;
 

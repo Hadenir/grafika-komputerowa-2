@@ -123,7 +123,7 @@ namespace GrafikaKomputerowa2
                     var B = N.Cross(new Vec3(0, 0, 1));
                     if (B.X == 0 && B.Y == 0 && B.Z == 0) B = new Vec3(0, 1, 0);
                     var T = B.Cross(N);
-                    var M = Mat3.FromRows(T, B, N);
+                    var M = Mat3.FromColumns(T, B, N);
                     N = context.K * N + (1 - context.K) * M * context.NormalMap.GetPixel(u, v);
                 }
 
